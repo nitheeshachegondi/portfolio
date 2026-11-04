@@ -78,7 +78,7 @@
     var p = hit.phrase;
     var projs = e.projects && e.projects.length ? joinList(names(profile, e.projects)) : "";
     if (level === "direct") {
-      return "I have directly done this" + (projs ? " — in " + projs : "") + ". " + (e.note || "");
+      return "I have directly done this" + (projs ? " — in " + projs : "") + ". " + (e.note || "") + (e.ref ? " My CIO’s reference letter backs this up." : "");
     }
     if (level === "transferable") {
       return "I have not held “" + p + "” as a title or tool, but " + (e.bridge || "") ;
@@ -92,8 +92,55 @@
     return NONE_SENTENCE + (e.near ? " Closest thing: " + e.near : "");
   }
 
+  /* ---------- Voice clean-up: fixes common dictation / speech-to-text slips ---------- */
+  var SPOKEN = [
+    [/\bnext\s*(?:dot\s*)?j\s?s\b/gi, "Next.js"],
+    [/\bnode\s*(?:dot\s*)?j\s?s\b/gi, "Node.js"],
+    [/\breact\s*(?:dot\s*)?j\s?s\b/gi, "React.js"],
+    [/\btype\s+script\b/gi, "TypeScript"],
+    [/\bjava\s+script\b/gi, "JavaScript"],
+    [/\bp(?:ie|y)\s*thon\b/gi, "Python"],
+    [/\bfast\s+a[\s.]*p[\s.]*i\b/gi, "FastAPI"],
+    [/\blang\s*chain\b/gi, "LangChain"],
+    [/\bopen[\s-]*a[\s.]*i\b/gi, "OpenAI"],
+    [/\bg[ie]t\s*hub\b/gi, "GitHub"],
+    [/\bver\s?cel\b/gi, "Vercel"],
+    [/\bfire\s+base\b/gi, "Firebase"],
+    [/\btail\s+wind\b/gi, "Tailwind"],
+    [/\bpie\s*torch\b/gi, "PyTorch"],
+    [/\btensor\s+flow\b/gi, "TensorFlow"],
+    [/\bk?c?oo?ber\s*net(?:es|ies|ees)\b/gi, "Kubernetes"],
+    [/\bmy\s+sequel\b/gi, "MySQL"],
+    [/\bpost\s+gres\b|\bpostgres\s+(?:q\s*l|sequel)\b/gi, "PostgreSQL"],
+    [/\bsequel\b/gi, "SQL"],
+    [/\bc[\s.]*i[\s.]*(?:slash\s*|\/\s*)?c[\s.]*d\b/gi, "CI/CD"],
+    [/\b(one|two|three|four|five|six|seven|eight|nine|ten)\s*(plus|\+)?\s*(?:years?|yrs?)\b/gi, function (m, n, plus) {
+      var map = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+      return map[n.toLowerCase()] + (plus ? "+" : "") + " years";
+    }]
+  ];
+  // Spoken-out letters: "A I" -> AI, "S Q L" -> SQL, "L L Ms" -> LLMs
+  ["AI", "LLM", "API", "SQL", "AWS", "GCP", "RAG", "ML", "SEO", "PPC", "CRM", "UX", "UI", "KPI", "HTML", "CSS", "GPT", "NLP", "ETL", "QA"].forEach(function (A) {
+    SPOKEN.push([new RegExp("\\b" + A.toLowerCase().split("").join("[\\s.]+") + "(s)?\\b", "gi"), function (m, s) { return A + (s ? "s" : ""); }]);
+  });
+
+  function normalize(text) {
+    var fixes = [], seen = {}, out = String(text || "");
+    SPOKEN.forEach(function (r) {
+      out = out.replace(r[0], function (m) {
+        var to = typeof r[1] === "function" ? r[1].apply(null, arguments) : r[1];
+        var key = m.toLowerCase();
+        if (key !== to.toLowerCase() && !seen[key] && fixes.length < 10) { seen[key] = 1; fixes.push([m.replace(/\s+/g, " "), to]); }
+        return to;
+      });
+    });
+    return { text: out, fixes: fixes };
+  }
+
   function analyze(text, profile, opts) {
     opts = opts || {};
+    var norm = normalize(text);
+    text = norm.text;
     var strict = opts.strict !== false;
     var list = compile(profile);
     var lines = splitLines(text || "");
@@ -102,13 +149,12 @@
 
     lines.forEach(function (line, li) {
       list.forEach(function (e) {
-        if (hits.has(e.id)) return;
         if (e.notIf && e.notIf.test(line)) return;
         for (var r = 0; r < e.res.length; r++) {
           var m = e.res[r].exec(line);
           if (m) {
-            hits.set(e.id, { entry: e, phrase: m[2].trim(), line: line, li: li });
             covered[li] = true;
+            if (!hits.has(e.id)) hits.set(e.id, { entry: e, phrase: m[2].trim(), line: line, li: li });
             break;
           }
         }
@@ -122,7 +168,7 @@
       var downgraded = false;
       if (level === "direct" && e.unlinked && strict) { level = "partial"; downgraded = true; }
       cards.push({
-        id: e.id, order: h.li, level: level, phrase: h.phrase, label: e.label,
+        id: e.id, order: h.li, level: level, phrase: h.phrase, label: e.label, ref: !!e.ref && level === "direct",
         line: shorten(h.line, 200),
         projects: (e.projects || []).slice(),
         text: explain(profile, h, level, downgraded),
@@ -200,11 +246,11 @@
       cards: cards, counts: counts, total: total, score: score, verdict: verdict,
       strong: lab("direct"), transferable: lab("transferable"), partial: lab("partial"), missing: lab("none"),
       best: best.map(function (id) { return { id: id, weight: weight[id] }; }),
-      senior: senior, strict: strict
+      senior: senior, strict: strict, fixes: norm.fixes
     };
   }
 
-  var api = { analyze: analyze, LABELS: LABELS, NONE_SENTENCE: NONE_SENTENCE };
+  var api = { analyze: analyze, normalize: normalize, LABELS: LABELS, NONE_SENTENCE: NONE_SENTENCE };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.Matcher = api;
 })(typeof window !== "undefined" ? window : globalThis);
