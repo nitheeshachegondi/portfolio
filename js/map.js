@@ -7,10 +7,10 @@
   "use strict";
 
   var COLORS = {
-    direct: "#c6f24e",
-    transferable: "#5ad1e6",
-    partial: "#ffb347",
-    none: "#ff6b6b"
+    direct: "#044f45",
+    transferable: "#8a5cf0",
+    partial: "#ff9a2e",
+    none: "#ff6b4d"
   };
 
   var cvs, ctx, W, H, dpr, raf, state = null, reduce = false;
@@ -59,8 +59,8 @@
 
   function frame(t) {
     ctx.clearRect(0, 0, W, H);
-    var ink = css("--ink") || "#ece8df";
-    var dim = css("--dim") || "#8b8a85";
+    var ink = css("--ink") || "#1a1a1a";
+    var dim = css("--dim") || "#5d5e53";
     var elapsed = state.static ? 1e9 : t - state.t0;
 
     // links
@@ -104,9 +104,9 @@
       if (!visible) return;
       var glow = n.pulse && elapsed - n.pulse < 500 ? 1 - (elapsed - n.pulse) / 500 : 0;
       roundRect(n.x, n.y - n.h / 2, n.w, n.h, 14);
-      ctx.fillStyle = "rgba(255,255,255," + (0.05 + glow * 0.1) + ")";
+      ctx.fillStyle = glow ? "rgba(235,216,251," + (0.5 + glow * 0.5) + ")" : "#ffffff";
       ctx.fill();
-      ctx.strokeStyle = glow ? "rgba(198,242,78," + (0.4 + glow * 0.5) + ")" : "rgba(255,255,255,0.18)";
+      ctx.strokeStyle = glow ? "rgba(4,79,69," + (0.5 + glow * 0.5) + ")" : "rgba(4,79,69,0.35)";
       ctx.lineWidth = 1; ctx.stroke();
       ctx.fillStyle = ink; ctx.textAlign = "left";
       ctx.fillText(trunc(n.label, n.w - 18), n.x + 10, n.y + 1);
@@ -118,9 +118,9 @@
       var visible = state.static || reduce || elapsed > n.appear;
       if (!visible) return;
       var lvl = n.settled || (state.static || reduce || elapsed > n.resolve) ? n.level : null;
-      var col = lvl ? COLORS[lvl] : "rgba(255,255,255,0.35)";
+      var col = lvl ? COLORS[lvl] : "rgba(26,26,26,0.28)";
       roundRect(n.x, n.y - n.h / 2, n.w, n.h, 13);
-      ctx.fillStyle = lvl ? hexA(col, 0.10) : "rgba(255,255,255,0.04)";
+      ctx.fillStyle = lvl ? hexA(col, 0.12) : "#fffef5";
       ctx.fill();
       ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.stroke();
       ctx.fillStyle = lvl ? ink : dim; ctx.textAlign = "left";
