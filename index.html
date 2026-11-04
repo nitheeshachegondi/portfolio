@@ -16,7 +16,8 @@
   <a class="mark" href="#top" id="top-link">Nitheesha<i aria-hidden="true"></i></a>
   <div class="top-cta">
     <a class="pill solid" href="#think">Paste a JD</a>
-    <a class="pill" href="#story">See my projects</a>
+    <a class="pill" href="#voices">The creative side</a>
+    <a class="pill" href="#resume">Full resume</a>
   </div>
 </header>
 
@@ -34,16 +35,22 @@
 
     <div class="hero-inner">
       <p class="eyebrow">Nitheesha Chegondi <span>×</span> your job description</p>
-      <p class="dates">AI product builder · Full stack · Generative AI</p>
+      <p class="dates">Built for the Wispr Flow Hiring Challenge · made to be spoken</p>
       <h1><span class="h1a">Don’t read my resume.</span><span class="h1b">Give it a role to think about.</span></h1>
       <p class="lede"><em>Paste a job description.</em> Watch my work connect to it — honestly. If I haven’t done something, it will say so.</p>
 
       <div class="panel" id="panel">
+        <div class="voice">
+          <span class="voice-ico" aria-hidden="true"></span>
+          <p><strong>Speak the role with Wispr Flow.</strong> Click the box, hold your Flow key and read the job description out loud — it lands here as clean, punctuated text. End with <em>“let it think”</em> and it runs.
+            <a href="https://wisprflow.ai" target="_blank" rel="noopener">Get Wispr Flow ↗</a></p>
+        </div>
         <label for="jd" class="sr">Job description</label>
-        <textarea id="jd" rows="9" placeholder="Paste the job description here — or press the mic and read it out loud…" spellcheck="false"></textarea>
+        <textarea id="jd" rows="9" placeholder="Speak or paste the job description here — with Wispr Flow, just hold your Flow key and talk…" spellcheck="false"></textarea>
+        <p class="nudge" id="voiceNudge" role="status" hidden>Got the role. Read it over, fix anything that sounds off, then press <b>Ctrl/⌘ + Enter</b> — or say <b>“let it think.”</b></p>
         <div class="panel-row">
           <button class="btn primary" id="thinkBtn" type="button">Let it think <span aria-hidden="true">→</span></button>
-          <button class="btn ghost" id="micBtn" type="button" aria-pressed="false" title="Speak the role"><span class="dot"></span> Speak the role</button>
+          <button class="btn ghost" id="micBtn" type="button" aria-pressed="false" title="Browser microphone (fallback if you don't use Wispr Flow)"><span class="dot"></span> Browser mic</button>
           <label class="strict" title="Strict mode: skills stated on my resume without project proof count as partial, not strong.">
             <input type="checkbox" id="strict" checked>
             <span class="switch"></span>
@@ -53,8 +60,10 @@
         <div class="samples">
           <span>Try a sample:</span>
           <button type="button" data-sample="ai">AI product role</button>
+          <button type="button" data-sample="creative">Digital engagement role</button>
           <button type="button" data-sample="growth">Growth marketing role</button>
           <button type="button" data-sample="backend">Senior backend role</button>
+          <button type="button" data-sample="spoken">Dictated-style sample</button>
         </div>
         <p class="hint" id="hint" role="status"></p>
       </div>
@@ -67,6 +76,7 @@
       <p class="thoughts" id="thoughts" aria-live="polite"></p>
       <button class="btn ghost small" id="replay" type="button" hidden>↺ Replay</button>
     </div>
+    <p class="fixes" id="fixes" hidden></p>
     <div class="canvas-wrap"><canvas id="map" aria-label="Connection map between the job's requirements and my projects"></canvas></div>
     <ul class="legend">
       <li class="l-direct">Strong</li>
@@ -101,6 +111,27 @@
     <div class="cards" id="cards"></div>
   </section>
 
+  <!-- ============ THE CREATIVE SIDE + REFERENCE ============ -->
+  <section class="voices" id="voices">
+    <p class="kicker">The creative side</p>
+    <h2>Ideas first. <em>Briefs second.</em></h2>
+    <p class="lede small">Don’t take my word for it — take my CIO’s. Here is the reference letter, word for word, with the sentences that matter lit up.</p>
+    <figure class="quote">
+      <blockquote id="quote"></blockquote>
+      <figcaption id="quoteBy"></figcaption>
+    </figure>
+    <div class="tells" id="tells"></div>
+
+    <h3 class="subhead">Receipts: what they said vs. what my resume says</h3>
+    <p class="lede small">A reference is only useful if it can be checked. Where the letter and my resume agree, it says so — and where something lives only in the letter, it says that too.</p>
+    <div class="receipts" id="receipts"></div>
+
+    <aside class="exhibit">
+      <p><strong>Exhibit A.</strong> Nobody briefed me to build a portfolio that cross-examines the job description before the recruiter does. I did it anyway.</p>
+      <p><strong>Exhibit B</strong> is the “Things I haven’t done yet” section further down — which most portfolios wouldn’t dare to include.</p>
+    </aside>
+  </section>
+
   <!-- ============ PROJECT STORY ============ -->
   <section class="story" id="story">
     <p class="kicker">Project story mode</p>
@@ -117,6 +148,19 @@
     <div class="gap-grid" id="gapGrid"></div>
   </section>
 
+  <!-- ============ FULL RESUME ============ -->
+  <section class="resume" id="resume">
+    <div class="resume-head">
+      <div>
+        <p class="kicker">Full resume</p>
+        <h2>The resume, uncut</h2>
+        <p class="lede small">Every line, as written. The matcher above reads from this same material — nothing here is rewritten per job.</p>
+      </div>
+      <button id="printBtn" class="btn primary" type="button">Print / save as PDF</button>
+    </div>
+    <article class="paper" id="resumeBody"></article>
+  </section>
+
   <section class="contact" id="contact">
     <p class="kicker">Say hello</p>
     <h2 id="contactTitle">Want to talk about a role?</h2>
@@ -126,7 +170,7 @@
 </main>
 
 <footer>
-  <p>Everything on this page is generated from one profile file — no claim is added per job. · <span id="year"></span></p>
+  <p>Everything on this page is generated from one profile file — no claim is added per job. · Made to be spoken, with Wispr Flow. · <span id="year"></span></p>
 </footer>
 
 <script src="js/profile.js"></script>
