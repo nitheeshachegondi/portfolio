@@ -103,6 +103,92 @@
       });
   }
 
+  /* ------------------- reference letter, receipts, full resume ------------------- */
+  // Lights up exact phrases (each once). Mutates `phrases` so a phrase is only marked once overall.
+  function mark(parent, text, phrases) {
+    while (text) {
+      var best = null, bi = -1;
+      phrases.forEach(function (ph) {
+        var i = text.indexOf(ph);
+        if (i > -1 && (bi < 0 || i < bi || (i === bi && ph.length > best.length))) { best = ph; bi = i; }
+      });
+      if (!best) { parent.appendChild(document.createTextNode(text)); return; }
+      if (bi) parent.appendChild(document.createTextNode(text.slice(0, bi)));
+      parent.appendChild(el("mark", null, best));
+      text = text.slice(bi + best.length);
+      phrases.splice(phrases.indexOf(best), 1);
+    }
+  }
+
+  var STAT = { same: ["same", "Same on my resume"], rel: ["rel", "Related on my resume"], only: ["only", "Only in the reference"] };
+
+  function renderVoices() {
+    var R = P.reference; if (!R) return;
+    var q = $("#quote"); q.textContent = "";
+    var left = R.highlights.slice();
+    R.paragraphs.forEach(function (t) { var p = el("p"); mark(p, t, left); q.appendChild(p); });
+    $("#quoteBy").textContent = "— " + R.from + ", " + R.org + " (reference letter)";
+
+    var tells = $("#tells"); tells.textContent = "";
+    R.tells.forEach(function (t) {
+      var d = el("div", "tell"); d.appendChild(el("h4", null, t.h)); d.appendChild(el("p", null, t.t)); d.appendChild(el("small", null, t.s)); tells.appendChild(d);
+    });
+
+    var rc = $("#receipts"); rc.textContent = "";
+    R.receipts.forEach(function (r) {
+      var row = el("div", "rcp"), a = el("div", "said"), b = el("div", "mine");
+      a.appendChild(el("h5", null, "The reference says")); a.appendChild(el("p", null, "“" + r.said + "”"));
+      b.appendChild(el("h5", null, "My resume says")); b.appendChild(el("p", null, r.mine));
+      var s = STAT[r.status] || STAT.only;
+      b.appendChild(el("span", "stat " + s[0], s[1]));
+      if (r.note) b.appendChild(el("p", "rnote", r.note));
+      row.appendChild(a); row.appendChild(b); rc.appendChild(row);
+    });
+  }
+
+  function renderResume() {
+    var R = P.resume, body = $("#resumeBody"); if (!R) return;
+    body.textContent = "";
+    body.appendChild(el("h3", "r-name", R.name));
+    body.appendChild(el("p", "r-headline", R.headline));
+    var c = el("p", "r-contact"); c.appendChild(document.createTextNode(R.contact.location));
+    R.contact.labels.forEach(function (lab) {
+      c.appendChild(document.createTextNode(" | "));
+      var url = P.links[lab.toLowerCase()];
+      if (url) { var a = el("a", null, lab); a.href = lab === "Email" ? "mailto:" + url : url; if (lab !== "Email") { a.target = "_blank"; a.rel = "noopener"; } c.appendChild(a); }
+      else c.appendChild(el("span", null, lab));
+    });
+    body.appendChild(c);
+
+    function sec(title) { var s = el("div", "r-sec"); s.appendChild(el("h4", null, title)); body.appendChild(s); return s; }
+    function bullets(parent, arr) { var ul = el("ul"); arr.forEach(function (t) { ul.appendChild(el("li", null, t)); }); parent.appendChild(ul); }
+
+    var s = sec("SUMMARY"); bullets(s, R.summary);
+    s = sec("SKILLS");
+    R.skills.forEach(function (k) { var p = el("p", "r-skill"); p.appendChild(el("b", null, k[0] + ": ")); p.appendChild(document.createTextNode(k[1])); s.appendChild(p); });
+    s = sec("EXPERIENCE");
+    R.experience.forEach(function (x) {
+      var it = el("div", "r-item"), row = el("div", "r-row");
+      row.appendChild(el("span", null, x.org + " | " + x.role)); row.appendChild(el("span", "r-sub", x.dates));
+      it.appendChild(row); bullets(it, x.bullets); s.appendChild(it);
+    });
+    s = sec("PROJECTS");
+    R.projects.forEach(function (p) {
+      var it = el("div", "r-item"), row = el("div", "r-row");
+      row.appendChild(el("span", null, p.title + (p.role ? " | " + p.role : "")));
+      it.appendChild(row);
+      var ul = el("ul"); p.bullets.forEach(function (t) { ul.appendChild(el("li", null, t)); });
+      if (p.website) { var li = el("li"); li.appendChild(document.createTextNode("Website: ")); var a = el("a", null, p.website); a.href = "https://" + p.website; a.target = "_blank"; a.rel = "noopener"; li.appendChild(a); ul.appendChild(li); }
+      it.appendChild(ul); s.appendChild(it);
+    });
+    s = sec("EDUCATION");
+    R.education.forEach(function (e) {
+      var it = el("div", "r-item"); it.appendChild(el("div", "r-row", e.degree));
+      var r2 = el("div", "r-row"); r2.appendChild(el("span", "r-sub", e.school + " | " + e.years)); it.appendChild(r2); s.appendChild(it);
+    });
+    s = sec("CERTIFICATIONS"); bullets(s, R.certifications);
+  }
+
   /* -------------------------------- thinking -------------------------------- */
   var timers = [], lastRes = null, lastText = "", lastStrict = true, filter = "all";
 
@@ -122,6 +208,12 @@
     var res = M.analyze(text, P, { strict: strict });
     if (!res.total) { hint(res.verdict); return; }
     lastRes = res; lastText = text; lastStrict = strict; filter = "all";
+    $("#voiceNudge").hidden = true;
+    var fx = $("#fixes");
+    if (res.fixes && res.fixes.length) {
+      fx.textContent = "Voice clean-up: " + res.fixes.map(function (f) { return "“" + f[0] + "” → " + f[1]; }).join("  ·  ") + ". If anything still sounds off, edit the text above and run it again.";
+      fx.hidden = false;
+    } else { fx.hidden = true; }
     $("#stage").hidden = false; $("#report").hidden = true; $("#replay").hidden = true;
     $("#stage").scrollIntoView({ behavior: "smooth", block: "start" });
     say(["Reading the role…", "Spotted " + res.total + " things it asks for…", "Checking each one against my work…", "Being strict — no stretching…"]);
@@ -180,7 +272,9 @@
 
   function card(c) {
     var a = el("article", "rc lvl-" + c.level); a.dataset.level = c.level; a.dataset.id = c.id;
-    var top = el("div", "rc-top"); top.appendChild(el("span", "badge", LV[c.level])); a.appendChild(top);
+    var top = el("div", "rc-top"); top.appendChild(el("span", "badge", LV[c.level]));
+    if (c.ref) top.appendChild(el("span", "refbadge", "Backed by my CIO’s reference"));
+    a.appendChild(top);
     a.appendChild(el("p", "rc-q", "“" + c.phrase + "”"));
     a.appendChild(el("p", "rc-t", c.text));
     a.appendChild(el("p", "rc-ai")); $(".rc-ai", a).hidden = true;
@@ -250,19 +344,34 @@
       $("#jd").value = base + finalText + interim;
     };
     rec.onerror = function () { hint("Couldn't hear that — check mic permission."); };
-    rec.onend = function () { var was = listening; listening = false; btn.setAttribute("aria-pressed", "false"); btn.lastChild.textContent = " Speak the role"; if (was === false && $("#jd").value.trim().length >= 20) run(); };
+    rec.onend = function () { var was = listening; listening = false; btn.setAttribute("aria-pressed", "false"); btn.lastChild.textContent = " Browser mic"; if (was === false && $("#jd").value.trim().length >= 20) run(); };
     listening = true; btn.setAttribute("aria-pressed", "true"); btn.lastChild.textContent = " Listening… tap to finish";
     hint("Read the role out loud. Tap again when you're done."); rec.start();
   }
 
   /* ---------------------------------- init ---------------------------------- */
   function init() {
-    renderStory(); renderGaps(); renderContact();
+    renderStory(); renderGaps(); renderVoices(); renderResume(); renderContact();
+    $("#printBtn").addEventListener("click", function () { window.print(); });
     $("#year").textContent = new Date().getFullYear();
     T.init($("#map"));
     $("#thinkBtn").addEventListener("click", run);
     $("#micBtn").addEventListener("click", mic);
     $("#jd").addEventListener("keydown", function (e) { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") run(); });
+    // Dictation (Wispr Flow types into any text box): nudge after a big insert, and run on the spoken phrase "let it think".
+    var prevLen = 0, nudgeT = 0;
+    $("#jd").addEventListener("input", function () {
+      var ta = this, v = ta.value;
+      var m = /(?:^|[\s.,!?])let it think(?: about it)?[\s.!?]*$/i.exec(v);
+      if (m && v.slice(0, m.index).trim().length >= 20) {
+        ta.value = v.slice(0, m.index).replace(/\s+$/, ""); prevLen = ta.value.length; run(); return;
+      }
+      var grew = v.length - prevLen; prevLen = v.length;
+      if (grew >= 40) {
+        var n = $("#voiceNudge"); n.hidden = false; clearTimeout(nudgeT);
+        nudgeT = setTimeout(function () { n.hidden = true; }, 14000);
+      }
+    });
     $("#replay").addEventListener("click", function () {
       if (!lastRes) return; $("#report").hidden = true; $("#replay").hidden = true; say(["Thinking again…", "Re-checking every requirement…"]);
       T.play(lastRes, P, { duration: 3200, onDone: function () { $("#thoughts").textContent = "Here is the honest answer."; renderReport(lastRes); $("#replay").hidden = false; narrate(lastText, lastStrict); } });
