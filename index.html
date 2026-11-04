@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nitheesha Chegondi — Give my work a role to think about</title>
+<meta name="description" content="Paste a job description and watch my work connect to it — honestly. Strong matches, transferable skills, partial exposure, and what I have not done.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="mark" href="#top" id="top-link">N<span>.</span>C</a>
+  <nav>
+    <a href="#think">Think</a>
+    <a href="#story">Projects</a>
+    <a href="#gaps">Honest gaps</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO / INPUT ============ -->
+  <section class="hero" id="think">
+    <div class="hero-copy">
+      <p class="kicker">Nitheesha Chegondi · AI product builder</p>
+      <h1>Don’t read my resume.<br><em>Give it a role to think about.</em></h1>
+      <p class="lede">Paste a job description. Watch my work connect to it — <strong>honestly</strong>. If I haven’t done something, it will say so.</p>
+      <span class="scribble s1">no keyword stuffing, promise ↴</span>
+    </div>
+
+    <div class="panel" id="panel">
+      <label for="jd" class="sr">Job description</label>
+      <textarea id="jd" rows="9" placeholder="Paste the job description here — or press the mic and read it out loud…" spellcheck="false"></textarea>
+      <div class="panel-row">
+        <button class="btn primary" id="thinkBtn" type="button">Let it think <span aria-hidden="true">→</span></button>
+        <button class="btn ghost" id="micBtn" type="button" aria-pressed="false" title="Speak the role"><span class="dot"></span> Speak the role</button>
+        <label class="strict" title="Strict mode: skills stated on my resume without project proof count as partial, not strong.">
+          <input type="checkbox" id="strict" checked>
+          <span class="switch"></span>
+          <span>Strict mode</span>
+        </label>
+      </div>
+      <div class="samples">
+        <span>Try a sample:</span>
+        <button type="button" data-sample="ai">AI product role</button>
+        <button type="button" data-sample="growth">Growth marketing role</button>
+        <button type="button" data-sample="backend">Senior backend role</button>
+      </div>
+      <p class="hint" id="hint" role="status"></p>
+    </div>
+  </section>
+
+  <!-- ============ THINKING ROOM ============ -->
+  <section class="stage" id="stage" hidden>
+    <div class="stage-head">
+      <p class="thoughts" id="thoughts" aria-live="polite"></p>
+      <button class="btn ghost small" id="replay" type="button" hidden>↺ Replay</button>
+    </div>
+    <div class="canvas-wrap"><canvas id="map" aria-label="Connection map between the job's requirements and my projects"></canvas></div>
+    <ul class="legend">
+      <li class="l-direct">Strong</li>
+      <li class="l-transferable">Transferable</li>
+      <li class="l-partial">Partial</li>
+      <li class="l-none">Not demonstrated</li>
+    </ul>
+  </section>
+
+  <!-- ============ REPORT ============ -->
+  <section class="report" id="report" hidden>
+    <div class="read">
+      <p class="kicker">Overall read</p>
+      <h2 id="verdict"></h2>
+      <div class="meter" id="meter" aria-hidden="true">
+        <i class="m-direct"></i><i class="m-transferable"></i><i class="m-partial"></i><i class="m-none"></i>
+      </div>
+      <ul class="counts" id="counts"></ul>
+      <p class="modeNote" id="modeNote"></p>
+      <p class="aistat" id="aiStat" hidden></p>
+      <div class="ai" id="aiRead" hidden>
+        <h3 id="aiHead"></h3>
+        <p id="aiOverall"></p>
+        <p id="aiNext"></p>
+        <small id="aiNote"></small>
+      </div>
+    </div>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="filters" id="filters" role="tablist" aria-label="Filter requirements"></div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- ============ PROJECT STORY ============ -->
+  <section class="story" id="story">
+    <p class="kicker">Project story mode</p>
+    <h2>The thinking behind the work</h2>
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <article class="story-body" id="storyBody"></article>
+  </section>
+
+  <!-- ============ HONEST GAPS ============ -->
+  <section class="gaps" id="gaps">
+    <p class="kicker">Honest gaps</p>
+    <h2>Things I haven’t done yet</h2>
+    <p class="lede small">If a role needs these, I’d rather tell you now than stretch. Anything not covered in my work is shown as <em>not demonstrated</em>.</p>
+    <div class="gap-grid" id="gapGrid"></div>
+  </section>
+
+  <section class="contact" id="contact">
+    <p class="kicker">Say hello</p>
+    <h2 id="contactTitle">Want to talk about a role?</h2>
+    <p class="lede small" id="openTo"></p>
+    <div class="links" id="links"></div>
+  </section>
+</main>
+
+<footer>
+  <p>Everything on this page is generated from one profile file — no claim is added per job. · <span id="year"></span></p>
+</footer>
+
+<script src="js/profile.js"></script>
+<script src="js/matcher.js"></script>
+<script src="js/samples.js"></script>
+<script src="js/map.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
