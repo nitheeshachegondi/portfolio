@@ -37,6 +37,7 @@ const SYSTEM = [
   "HARD RULES:",
   "- Never change a requirement's level. Never upgrade it. Never invent a skill, tool, project, number, employer, result or year that is not in the facts.",
   "- Use the job description's own words (jdTerm) when you explain a match.",
+  "- You may mention my CIO's reference letter only for requirements marked refBacked, and only using what referenceFromCIO actually says. Show the creative side (ideas, initiative, wit) only where the facts support it.",
   "- For 'transferable' say plainly that it is a related skill, not the exact one. For 'partial' say plainly it is exposure, not depth.",
   "- For level 'none' return an empty string. Do not soften or bridge a gap.",
   "- Be specific: name the real project and what I actually did. No hype words (passionate, expert, rockstar, ninja, extensive, deep).",
@@ -49,10 +50,11 @@ function facts(res) {
   return {
     me: { name: P.name, summary: P.summary, education: P.education, formalExperience: P.formalExperience.label, openTo: P.openTo },
     projects: P.projects.map((p) => ({ id: p.id, name: p.name, kind: p.kind, role: p.role, tagline: p.tagline, did: p.did })),
+    referenceFromCIO: P.reference ? P.reference.paragraphs.join(" ") : "",
     matcherVerdict: res.verdict,
     counts: res.counts,
     requirements: res.cards.slice(0, 18).map((c) => ({
-      id: c.id, level: c.level, jdTerm: c.phrase, matchedSkill: c.label,
+      id: c.id, level: c.level, refBacked: !!c.ref, jdTerm: c.phrase, matchedSkill: c.label,
       honestStatement: c.text, projects: c.projects.map(pn)
     }))
   };
