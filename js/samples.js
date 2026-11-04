@@ -22,6 +22,20 @@ Requirements
 - Excellent communication skills
 - Bachelor's degree in Marketing or a related field`,
 
+  spoken: `Hi, I'm hiring an A I product engineer. They need to be strong in next js, type script and python. Experience with lang chain, R A G and fast api is a big plus. They should be comfortable with S Q L and get hub. Knowing kuber netes would be nice. Three plus years of experience.`,
+
+  creative: `Digital Engagement & Creative Growth Associate
+
+Requirements
+- Design, build and maintain websites and landing pages
+- Run social media campaigns across Instagram, Meta and LinkedIn
+- Bring original ideas and strategy proposals rather than only executing a brief
+- Experience with digital engagement and audience growth
+- Hands-on with Google Ads and SEO
+- Analytics and funnel tracking
+- Reliable on timelines and good with colleagues
+- 2+ years of experience`,
+
   backend: `Senior Backend Engineer
 
 Requirements
