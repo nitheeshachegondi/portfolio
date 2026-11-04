@@ -7,51 +7,57 @@
 <meta name="description" content="Paste a job description and watch my work connect to it — honestly. Strong matches, transferable skills, partial exposure, and what I have not done.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="top">
-  <a class="mark" href="#top" id="top-link">N<span>.</span>C</a>
-  <nav>
-    <a href="#think">Think</a>
-    <a href="#story">Projects</a>
-    <a href="#gaps">Honest gaps</a>
-    <a href="#contact">Contact</a>
-  </nav>
+  <a class="mark" href="#top" id="top-link">Nitheesha<i aria-hidden="true"></i></a>
+  <div class="top-cta">
+    <a class="pill solid" href="#think">Paste a JD</a>
+    <a class="pill" href="#story">See my projects</a>
+  </div>
 </header>
 
 <main id="top">
 
   <!-- ============ HERO / INPUT ============ -->
   <section class="hero" id="think">
-    <div class="hero-copy">
-      <p class="kicker">Nitheesha Chegondi · AI product builder</p>
-      <h1>Don’t read my resume.<br><em>Give it a role to think about.</em></h1>
-      <p class="lede">Paste a job description. Watch my work connect to it — <strong>honestly</strong>. If I haven’t done something, it will say so.</p>
-      <span class="scribble s1">no keyword stuffing, promise ↴</span>
-    </div>
+    <svg class="swirl" viewBox="0 0 1440 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path d="M 930 -20 C 1120 150 1290 300 1190 330 C 1070 365 1020 200 1160 150 C 1300 100 1420 220 1520 250" stroke-width="34"/>
+      <path d="M -60 700 C 120 600 330 640 380 780" stroke-width="30"/>
+      <path d="M 1100 790 C 1180 700 1300 690 1500 720" stroke-width="26"/>
+    </svg>
+    <div class="blob blob-l" aria-hidden="true"></div>
+    <div class="blob blob-r" aria-hidden="true"></div>
 
-    <div class="panel" id="panel">
-      <label for="jd" class="sr">Job description</label>
-      <textarea id="jd" rows="9" placeholder="Paste the job description here — or press the mic and read it out loud…" spellcheck="false"></textarea>
-      <div class="panel-row">
-        <button class="btn primary" id="thinkBtn" type="button">Let it think <span aria-hidden="true">→</span></button>
-        <button class="btn ghost" id="micBtn" type="button" aria-pressed="false" title="Speak the role"><span class="dot"></span> Speak the role</button>
-        <label class="strict" title="Strict mode: skills stated on my resume without project proof count as partial, not strong.">
-          <input type="checkbox" id="strict" checked>
-          <span class="switch"></span>
-          <span>Strict mode</span>
-        </label>
+    <div class="hero-inner">
+      <p class="eyebrow">Nitheesha Chegondi <span>×</span> your job description</p>
+      <p class="dates">AI product builder · Full stack · Generative AI</p>
+      <h1><span class="h1a">Don’t read my resume.</span><span class="h1b">Give it a role to think about.</span></h1>
+      <p class="lede"><em>Paste a job description.</em> Watch my work connect to it — honestly. If I haven’t done something, it will say so.</p>
+
+      <div class="panel" id="panel">
+        <label for="jd" class="sr">Job description</label>
+        <textarea id="jd" rows="9" placeholder="Paste the job description here — or press the mic and read it out loud…" spellcheck="false"></textarea>
+        <div class="panel-row">
+          <button class="btn primary" id="thinkBtn" type="button">Let it think <span aria-hidden="true">→</span></button>
+          <button class="btn ghost" id="micBtn" type="button" aria-pressed="false" title="Speak the role"><span class="dot"></span> Speak the role</button>
+          <label class="strict" title="Strict mode: skills stated on my resume without project proof count as partial, not strong.">
+            <input type="checkbox" id="strict" checked>
+            <span class="switch"></span>
+            <span>Strict mode</span>
+          </label>
+        </div>
+        <div class="samples">
+          <span>Try a sample:</span>
+          <button type="button" data-sample="ai">AI product role</button>
+          <button type="button" data-sample="growth">Growth marketing role</button>
+          <button type="button" data-sample="backend">Senior backend role</button>
+        </div>
+        <p class="hint" id="hint" role="status"></p>
       </div>
-      <div class="samples">
-        <span>Try a sample:</span>
-        <button type="button" data-sample="ai">AI product role</button>
-        <button type="button" data-sample="growth">Growth marketing role</button>
-        <button type="button" data-sample="backend">Senior backend role</button>
-      </div>
-      <p class="hint" id="hint" role="status"></p>
     </div>
   </section>
 
